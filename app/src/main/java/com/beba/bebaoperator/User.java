@@ -2,71 +2,112 @@ package com.beba.bebaoperator;
 
 
 public class User {
-    private String full_name;
-    private String email;
-    private String userType;
+    private String MatatuInfo;
+    private String bookingtime;
+    private String documentid;
+    private String fare;
+    private String regno;
+    private String route;
 
-    private Double longitude;
-    private Double latitude;
-    private String userId;
+    private String sacco;
+    private String status;
+    private String userid;
+
+    private String matatubooked;
 
     public User() {}
 
-    public User(String full_name, String email, String userType, Double longitude, Double latitude, String userId) {
-        this.full_name = full_name;
-        this.email = email;
-        this.userType = userType;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.userId = userId;
+    public User(String matatuInfo, String bookingtime, String documentid, String fare, String regno, String route, String sacco, String status, String userid, String matatubooked) {
+        MatatuInfo = matatuInfo;
+        this.bookingtime = bookingtime;
+        this.documentid = documentid;
+        this.fare = fare;
+        this.regno = regno;
+        this.route = route;
+        this.sacco = sacco;
+        this.status = status;
+        this.userid = userid;
+        this.matatubooked = matatubooked;
     }
 
-    public String getFull_name() {
-        return full_name;
+    public String getMatatuInfo() {
+        return MatatuInfo;
     }
 
-    public void setFull_name(String full_name) {
-        this.full_name = full_name;
+    public void setMatatuInfo(String matatuInfo) {
+        MatatuInfo = matatuInfo;
     }
 
-    public String getEmail() {
-        return email;
+    public String getBookingtime() {
+        return bookingtime;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setBookingtime(String bookingtime) {
+        this.bookingtime = bookingtime;
     }
 
-    public String getUserType() {
-        return userType;
+    public String getDocumentid() {
+        return documentid;
     }
 
-    public void setUserType(String userType) {
-        this.userType = userType;
+    public void setDocumentid(String documentid) {
+        this.documentid = documentid;
     }
 
-    public Double getLongitude() {
-        return longitude;
+    public String getFare() {
+        return fare;
     }
 
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
+    public void setFare(String fare) {
+        this.fare = fare;
     }
 
-    public Double getLatitude() {
-        return latitude;
+    public String getRegno() {
+        return regno;
     }
 
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
+    public void setRegno(String regno) {
+        this.regno = regno;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getRoute() {
+        return route;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setRoute(String route) {
+        this.route = route;
+    }
+
+    public String getSacco() {
+        return sacco;
+    }
+
+    public void setSacco(String sacco) {
+        this.sacco = sacco;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+    public String getMatatubooked() {
+        return matatubooked;
+    }
+
+    public void setMatatubooked(String matatubooked) {
+        this.matatubooked = matatubooked;
     }
 }
 

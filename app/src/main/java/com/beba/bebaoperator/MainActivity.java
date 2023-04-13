@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (mAuth.getCurrentUser() != null) {
             // user is already logged in, redirect to landing page
-            Intent intent = new Intent(MainActivity.this, LandingPage.class);
+            Intent intent = new Intent(MainActivity.this, GetStarted.class);
             startActivity(intent);
             finish();
         }

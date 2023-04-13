@@ -113,7 +113,7 @@ public class Register extends AppCompatActivity {
                                         public void onSuccess(Void aVoid) {
                                             Toast.makeText(Register.this, "Registration successful.", Toast.LENGTH_SHORT).show();
                                             progressDialog.dismiss();
-                                            Intent intent = new Intent(Register.this, LandingPage.class);
+                                            Intent intent = new Intent(Register.this, GetStarted.class);
                                             startActivity(intent);
                                         }
                                     })

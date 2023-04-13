@@ -4,7 +4,10 @@ import static android.content.ContentValues.TAG;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -15,11 +18,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -30,8 +36,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -62,6 +73,13 @@ public class NyumbaniFragment extends Fragment {
     double latitude;
     double longitude;
 
+    private RecyclerView mRecyclerView;
+    private UserAdapter mAdapter;
+    private List<User> mUsersList;
+
+    private FirebaseFirestore db;
+
+    String userId;
 
 
     @Override
@@ -71,7 +89,7 @@ public class NyumbaniFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_nyumbani, container, false);
 
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Nearby Matatus");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("My Bookings");
 
 
 
@@ -134,12 +152,24 @@ public class NyumbaniFragment extends Fragment {
                     LOCATION_PERMISSION_REQUEST_CODE);
         }
 
+        mRecyclerView = view.findViewById(R.id.recyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        db = FirebaseFirestore.getInstance();
+
+        mUsersList = new ArrayList<>();
+        mAdapter = new UserAdapter(getContext(), mUsersList);
+        mRecyclerView.setAdapter(mAdapter);
+
+        fetchUsers();
+
         return view;
     }
 
 
     public void updateLocationToFirestore(){
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -164,4 +194,114 @@ public class NyumbaniFragment extends Fragment {
                 });
 
     }
+
+//
+
+
+    private void fetchUsers() {
+        db.collection("Bookings")
+
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        User user = documentSnapshot.toObject(User.class);
+                        mUsersList.add(user);
+
+
+                    }
+                    mAdapter.notifyDataSetChanged();
+                    Log.d(TAG, "ffetching users: " + queryDocumentSnapshots);
+
+                })
+                .addOnFailureListener(e -> {
+                    Log.d(TAG, "Error fetching users: " + e.getMessage());
+                });
+    }
+
+    public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
+        private List<User> userList;
+
+        public UserAdapter(Context context, List<User> userList) {
+            this.userList = userList;
+        }
+
+
+
+
+        @NonNull
+        @Override
+        public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_item, parent, false);
+            return new UserViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
+            User user = userList.get(position);
+            holder.bind(user);
+        }
+
+        @Override
+        public int getItemCount() {
+            return userList.size();
+        }
+
+        public class UserViewHolder extends RecyclerView.ViewHolder{
+            private TextView nameTextView;
+            private TextView emailTextView;
+            private TextView locationTv;
+
+            private TextView matatuSacco;
+            private TextView regno;
+
+            UserViewHolder(@NonNull View itemView) {
+                super(itemView);
+                nameTextView = itemView.findViewById(R.id.matName);
+//                emailTextView = itemView.findViewById(R.id.emailTextView);
+
+                matatuSacco = itemView.findViewById(R.id.matsacco);
+                regno = itemView.findViewById(R.id.matregno);
+
+                locationTv = itemView.findViewById(R.id.loctv);
+
+
+
+                // Add an onClick listener to the itemView
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int position = getAdapterPosition();
+                        User user = userList.get(position);
+                        String theuserId = user.getDocumentid();
+
+                        // Show a toast with the userId
+                        //Toast.makeText(view.getContext(), "Clicked User Id: " + theuserId, Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(view.getContext(), ConfirmBookings.class);
+                        intent.putExtra("Userid", theuserId);
+                        view.getContext().startActivity(intent);
+                    }
+                });
+            }
+
+
+            void bind(User user) {
+                nameTextView.setText(user.getBookingtime());
+                matatuSacco.setText(user.getStatus());
+                regno.setText(user.getRoute());
+                locationTv.setText(user.getFare());
+
+
+
+
+
+            }
+
+
+        }
+    }
+
+
+
+
 }
